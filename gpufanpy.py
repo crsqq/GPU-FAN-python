@@ -3,8 +3,8 @@ import os
 import subprocess
 
 class Gpufan:
-    PATH = "/home/martin/ip_srv/"
-    GPUFAN_BIN = "gpufan/centrality-gpu"
+    PATH = "/opt/gpufanshared/"
+    GPUFAN_BIN = "/opt/gpufanshared/bin/centrality-gpu"
 
 
     def __init__(self, cmtype, elistFrom, nodes, elistTo=None, directed=False):
@@ -57,15 +57,16 @@ class Gpufan:
 
     def readResults(self):
         res = [0.0] * self.nodes
-        with open("tmpGpufan.output", 'r') as result:
+        with open(self.TMPRESULT, 'r') as result:
             result.readline()
-            for i in range(0, self.nodes):
+            while(True):
                 entry = result.readline().split()
+                if entry[0].lower() == "time:":
+                    break
                 idx = int(entry[0])
                 value = float(entry[1])
                 res[idx] = value
-#            print result.readline()
-            print(result.readline())
+            print(" ".join(entry))
         return res
 
 
@@ -86,6 +87,7 @@ def main():
     eL = [4,2,4,4,5]
     eR = [5,8,8,9,9]
     fan = Gpufan("c", elistFrom=eL, elistTo=eR, nodes=10)
+    print( fan.runAll())
 
 
 if __name__ == '__main__':
