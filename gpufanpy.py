@@ -39,20 +39,17 @@ class Gpufan:
 
     def runGPU(self):
         if self.directed:
-            cmdArgs = [Gpufan.GPUFAN_BIN, "-" + self.cmtype, '-g', self.TMPGRAPH, "-d",
-                    "-o", self.TMPRESULT]
+            cmdArgs = "%s -%s -g %s -d -o %s" % (Gpufan.GPUFAN_BIN, self.cmtype,
+                    self.TMPGRAPH, self.TMPRESULT)
         else:
-            cmdArgs = [Gpufan.GPUFAN_BIN, "-" + self.cmtype, '-g', self.TMPGRAPH, "-o",
-                    self.TMPRESULT]
-            proc = subprocess.Popen(cmdArgs,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                    )
-            proc.wait()
+            cmdArgs = "%s -%s -g %s -o %s" % (Gpufan.GPUFAN_BIN, self.cmtype,
+                    self.TMPGRAPH, self.TMPRESULT)
 
-        res = self.readResults()
-        self.result = res
-        #print proc.communicate()
+        cmd = [Gpufan.GPUFAN_BIN, "-" + self.cmtype, '-g', self.TMPGRAPH, "-o", self.TMPRESULT]
+        exitCode = subprocess.call(cmd)
+        print(exitCode)
+
+        self.result = self.readResults()
 
 
     def readResults(self):
