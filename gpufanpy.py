@@ -12,7 +12,7 @@ class Gpufan:
 
         :cmtype: b (betweenness), c (closeness), e (eccentric), s (stress)
         :nodes: number of vertices
-        :elitFrom: either and edgelist or the first part (the from entries) of
+        :elistFrom: either and edgelist or the first part (the from entries) of
         en edgelist, in the latter case you have to provide the second part
         through elistTo
         :directed: set to True if graph is directed
@@ -21,7 +21,7 @@ class Gpufan:
         self.cmtype = cmtype
         self.directed = directed
         self.nodes = nodes
-        if elistTo != None:
+        if elistTo:
             self.edgelist = zip(elistFrom, elistTo)
         else:
             self.edgelist = elistFrom
@@ -37,15 +37,13 @@ class Gpufan:
                 string = "%i\t%i\n" % item
                 outfile.write(string)
 
+
     def runGPU(self):
         if self.directed:
-            cmdArgs = "%s -%s -g %s -d -o %s" % (Gpufan.GPUFAN_BIN, self.cmtype,
-                    self.TMPGRAPH, self.TMPRESULT)
+            cmd = [Gpufan.GPUFAN_BIN, "-" + self.cmtype, '-g', self.TMPGRAPH, "-d", "-o", self.TMPRESULT]
         else:
-            cmdArgs = "%s -%s -g %s -o %s" % (Gpufan.GPUFAN_BIN, self.cmtype,
-                    self.TMPGRAPH, self.TMPRESULT)
+            cmd = [Gpufan.GPUFAN_BIN, "-" + self.cmtype, '-g', self.TMPGRAPH, "-o", self.TMPRESULT]
 
-        cmd = [Gpufan.GPUFAN_BIN, "-" + self.cmtype, '-g', self.TMPGRAPH, "-o", self.TMPRESULT]
         exitCode = subprocess.call(cmd)
         print(exitCode)
 
